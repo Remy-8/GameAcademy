@@ -1,66 +1,84 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using GamifiedProgrammingAcademy.API.Data;     
-using GamifiedProgrammingAcademy.API.Entities; 
-using System.Collections.Generic;              
-using System.Threading.Tasks;                  
-
+﻿using Microsoft.AspNetCore.Mvc;
+using GamifiedProgrammingAcademy.API.Contracts;
+using GamifiedProgrammingAcademy.API.Dtos;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 [ApiController]
 [Route("api/[controller]")]
 public class ChallengesController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly IChallengeService _challengeService;
 
-    public ChallengesController(AppDbContext context)
+    public ChallengesController(IChallengeService challengeService)
     {
-        _context = context;
+        _challengeService = challengeService;
     }
 
-    
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Challenge>>> GetChallenges()
+    public async Task<ActionResult<IEnumerable<ChallengeResponseDto>>> GetChallenges()
     {
-        return await _context.Challenges.ToListAsync();
+        var challenges = await _challengeService.GetAllChallengesAsync();
+        return Ok(challenges);
     }
 
-    
     [HttpGet("{id}")]
-    public async Task<ActionResult<Challenge>> GetChallenge(int id)
+    public async Task<ActionResult<ChallengeResponseDto>> GetChallenge(int id)
     {
-        var challenge = await _context.Challenges.FindAsync(id);
-        if (challenge == null) return NotFound();
-        return challenge;
+        var challenge = await _challengeService.GetChallengeByIdAsync(id);
+
+        if (challenge == null)
+            return NotFound($"No se encontró el desafío con ID {id}");
+
+        return Ok(challenge);
     }
 
-    
     [HttpPost]
-    public async Task<ActionResult<Challenge>> CreateChallenge(Challenge challenge)
+    public async Task<ActionResult<ChallengeResponseDto>> CreateChallenge(CreateChallengeDto createChallengeDto)
     {
-        _context.Challenges.Add(challenge);
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetChallenge), new { id = challenge.Id }, challenge);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            var challenge = await _challengeService.CreateChallengeAsync(createChallengeDto);
+            return CreatedAtAction(nameof(GetChallenge), new { id = challenge.Id }, challenge);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
-    
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateChallenge(int id, Challenge challenge)
+    public async Task<ActionResult<ChallengeResponseDto>> UpdateChallenge(int id, UpdateChallengeDto updateChallengeDto)
     {
-        if (id != challenge.Id) return BadRequest();
-        _context.Entry(challenge).State = EntityState.Modified;
-        await _context.SaveChangesAsync();
-        return NoContent();
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            var challenge = await _challengeService.UpdateChallengeAsync(id, updateChallengeDto);
+
+            if (challenge == null)
+                return NotFound($"No se encontró el desafío con ID {id}");
+
+            return Ok(challenge);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
-    
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteChallenge(int id)
     {
-        var challenge = await _context.Challenges.FindAsync(id);
-        if (challenge == null) return NotFound();
-        _context.Challenges.Remove(challenge);
-        await _context.SaveChangesAsync();
+        var deleted = await _challengeService.DeleteChallengeAsync(id);
+
+        if (!deleted)
+            return NotFound($"No se encontró el desafío con ID {id}");
+
         return NoContent();
     }
 }
