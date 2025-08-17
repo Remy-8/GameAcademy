@@ -1,10 +1,10 @@
 using GamifiedProgrammingAcademy.API.Contracts;
-using GamifiedProgrammingAcademy.API.Data;
 using GamifiedProgrammingAcademy.API.Services;
 using Microsoft.EntityFrameworkCore;
 using GamifiedProgrammingAcademy.Domain.Interfaces;
 using GamifiedProgrammingAcademy.Infrastructure.Context;
 using GamifiedProgrammingAcademy.Infrastructure.Repositories;
+using GamifiedProgrammingAcademy.API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,15 +29,28 @@ builder.Services.AddScoped<IChallengeService, ChallengeService>();
 
 builder.Services.AddControllers();
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// Configurar Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+});
 
 var app = builder.Build();
 
+app.UseCors("AllowAll");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
@@ -45,5 +58,12 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Inicializar datos de prueba
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<GamifiedAcademyContext>();
+    await SeedData.InitializeAsync(context);
+}
 
 app.Run();
