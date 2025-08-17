@@ -18,7 +18,9 @@ builder.Services.AddScoped<IChallengeRepository, ChallengeRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBadgeRepository, BadgeRepository>();
 builder.Services.AddScoped<ISubmissionRepository, SubmissionRepository>();
-
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IBadgeService, BadgeService>();
+builder.Services.AddScoped<ISubmissionService, SubmissionService>();
 // Registrar servicios
 builder.Services.AddScoped<IChallengeService, ChallengeService>();
 
