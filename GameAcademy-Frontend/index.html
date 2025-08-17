@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Academy - Academia de Programación Gamificada</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            color: #667eea;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .card .meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .points {
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .difficulty {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .difficulty.Beginner {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .difficulty.Intermediate {
+            background: #FF9800;
+            color: white;
+        }
+
+        .difficulty.Advanced {
+            background: #F44336;
+            color: white;
+        }
+
+        /* Forms */
+        .form-container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #5a6fd8;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .nav-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Badge specific styles */
+        .badge-card {
+            text-align: center;
+        }
+
+        .badge-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .rarity {
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .rarity.Common { background: #28a745; color: white; }
+        .rarity.Rare { background: #007bff; color: white; }
+        .rarity.Epic { background: #6f42c1; color: white; }
+        .rarity.Legendary { background: #fd7e14; color: white; }
+
+        /* User table */
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .user-table th,
+        .user-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .user-table th {
+            background: #667eea;
+            color: white;
+        }
+
+        .user-table tr:hover {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎮 Game Academy</h1>
+            <p>Academia de Programación Gamificada</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav">
+            <button class="nav-btn active" onclick="showSection('dashboard')">🏠 Dashboard</button>
+            <button class="nav-btn" onclick="showSection('challenges')">🎯 Desafíos</button>
+            <button class="nav-btn" onclick="showSection('badges')">🏆 Badges</button>
+            <button class="nav-btn" onclick="showSection('users')">👥 Usuarios</button>
+            <button class="nav-btn" onclick="showSection('admin')">⚙️ Admin</button>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="section active">
+            <h2>📊 Dashboard</h2>
+            <div class="stats" id="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalChallenges">0</div>
+                    <div class="stat-label">Desafíos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalUsers">0</div>
+                    <div class="stat-label">Usuarios</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalBadges">0</div>
+                    <div class="stat-label">Badges</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalSubmissions">0</div>
+                    <div class="stat-label">Submissions</div>
+                </div>
+            </div>
+
+            <h3 style="color: #667eea; margin-bottom: 20px;">🏆 Top Usuarios</h3>
+            <div id="topUsers"></div>
+        </div>
+
+        <!-- Challenges Section -->
+        <div id="challenges" class="section">
+            <h2>🎯 Desafíos de Programación</h2>
+            <div class="loading" id="challengesLoading">Cargando desafíos...</div>
+            <div class="cards-grid" id="challengesGrid"></div>
+        </div>
+
+        <!-- Badges Section -->
+        <div id="badges" class="section">
+            <h2>🏆 Sistema de Badges</h2>
+            <div class="loading" id="badgesLoading">Cargando badges...</div>
+            <div class="cards-grid" id="badgesGrid"></div>
+        </div>
+
+        <!-- Users Section -->
+        <div id="users" class="section">
+            <h2>👥 Usuarios Registrados</h2>
+            <div class="loading" id="usersLoading">Cargando usuarios...</div>
+            <table class="user-table" id="usersTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>👤 Usuario</th>
+                        <th>📧 Email</th>
+                        <th>📊 Puntos</th>
+                        <th>📈 Nivel</th>
+                        <th>📅 Fecha Registro</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- Admin Section -->
+        <div id="admin" class="section">
+            <h2>⚙️ Panel de Administración</h2>
+            
+            <div class="form-container">
+                <h3 style="color: #667eea; margin-bottom: 15px;">➕ Crear Nuevo Desafío</h3>
+                <form id="challengeForm">
+                    <div class="form-group">
+                        <label for="challengeTitle">Título:</label>
+                        <input type="text" id="challengeTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="challengeDescription">Descripción:</label>
+                        <textarea id="challengeDescription" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="challengePoints">Puntos:</label>
+                        <input type="number" id="challengePoints" min="1" max="1000" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="challengeDifficulty">Dificultad:</label>
+                        <select id="challengeDifficulty" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="Beginner">Principiante</option>
+                            <option value="Intermediate">Intermedio</option>
+                            <option value="Advanced">Avanzado</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="challengeCategory">Categoría:</label>
+                        <input type="text" id="challengeCategory" placeholder="Ej: Math, Logic, Strings" required>
+                    </div>
+                    <button type="submit" class="btn">🚀 Crear Desafío</button>
+                </form>
+            </div>
+
+            <div class="form-container">
+                <h3 style="color: #667eea; margin-bottom: 15px;">👤 Crear Nuevo Usuario</h3>
+                <form id="userForm">
+                    <div class="form-group">
+                        <label for="userUsername">Nombre de Usuario:</label>
+                        <input type="text" id="userUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userEmail">Email:</label>
+                        <input type="email" id="userEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userFirstName">Nombre:</label>
+                        <input type="text" id="userFirstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userLastName">Apellido:</label>
+                        <input type="text" id="userLastName" required>
+                    </div>
+                    <button type="submit" class="btn">👥 Crear Usuario</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Base URL
+        const API_BASE = 'https://localhost:7291/api';
+
+        // Navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Load data for the section
+            switch(sectionId) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'challenges':
+                    loadChallenges();
+                    break;
+                case 'badges':
+                    loadBadges();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+            }
+        }
+
+        // API Functions
+        async function apiGet(endpoint) {
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`);
+                if (!response.ok) throw new Error(`Error: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('API Error:', error);
+                return null;
+            }
+        }
+
+        async function apiPost(endpoint, data) {
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) throw new Error(`Error: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('API Error:', error);
+                return null;
+            }
+        }
+
+        // Load Dashboard
+        async function loadDashboard() {
+            const [challenges, users, badges, submissions] = await Promise.all([
+                apiGet('/challenges'),
+                apiGet('/users'),
+                apiGet('/badges'),
+                apiGet('/submissions')
+            ]);
+
+            document.getElementById('totalChallenges').textContent = challenges?.length || 0;
+            document.getElementById('totalUsers').textContent = users?.length || 0;
+            document.getElementById('totalBadges').textContent = badges?.length || 0;
+            document.getElementById('totalSubmissions').textContent = submissions?.length || 0;
+
+            // Load top users
+            const topUsers = await apiGet('/users/top/5');
+            if (topUsers) {
+                const topUsersHtml = topUsers.map((user, index) => `
+                    <div class="card">
+                        <h3>${index + 1}. ${user.firstName} ${user.lastName}</h3>
+                        <p><strong>@${user.username}</strong></p>
+                        <div class="meta">
+                            <span class="points">${user.totalPoints} puntos</span>
+                            <span style="color: #667eea; font-weight: bold;">Nivel ${user.level}</span>
+                        </div>
+                    </div>
+                `).join('');
+                document.getElementById('topUsers').innerHTML = `<div class="cards-grid">${topUsersHtml}</div>`;
+            }
+        }
+
+        // Load Challenges
+        async function loadChallenges() {
+            const challenges = await apiGet('/challenges');
+            const loading = document.getElementById('challengesLoading');
+            const grid = document.getElementById('challengesGrid');
+            
+            if (challenges) {
+                loading.style.display = 'none';
+                const challengesHtml = challenges.map(challenge => `
+                    <div class="card">
+                        <h3>${challenge.title}</h3>
+                        <p>${challenge.description}</p>
+                        <div class="meta">
+                            <span class="points">${challenge.points} pts</span>
+                            <span class="difficulty ${challenge.difficulty || 'Beginner'}">${challenge.difficulty || 'Beginner'}</span>
+                        </div>
+                    </div>
+                `).join('');
+                grid.innerHTML = challengesHtml;
+            } else {
+                loading.textContent = 'Error al cargar desafíos';
+            }
+        }
+
+        // Load Badges
+        async function loadBadges() {
+            const badges = await apiGet('/badges');
+            const loading = document.getElementById('badgesLoading');
+            const grid = document.getElementById('badgesGrid');
+            
+            if (badges) {
+                loading.style.display = 'none';
+                const badgesHtml = badges.map(badge => `
+                    <div class="card badge-card">
+                        <span class="badge-icon">${badge.iconUrl || '🏆'}</span>
+                        <h3>${badge.name}</h3>
+                        <p>${badge.description}</p>
+                        <div class="meta">
+                            <span class="points">${badge.requiredPoints} pts</span>
+                            <span class="rarity ${badge.rarity || 'Common'}">${badge.rarity || 'Common'}</span>
+                        </div>
+                    </div>
+                `).join('');
+                grid.innerHTML = badgesHtml;
+            } else {
+                loading.textContent = 'Error al cargar badges';
+            }
+        }
+
+        // Load Users
+        async function loadUsers() {
+            const users = await apiGet('/users');
+            const loading = document.getElementById('usersLoading');
+            const table = document.getElementById('usersTable');
+            const tbody = document.getElementById('usersTableBody');
+            
+            if (users) {
+                loading.style.display = 'none';
+                table.style.display = 'table';
+                const usersHtml = users.map(user => `
+                    <tr>
+                        <td><strong>${user.firstName} ${user.lastName}</strong><br><small>@${user.username}</small></td>
+                        <td>${user.email}</td>
+                        <td><span class="points">${user.totalPoints}</span></td>
+                        <td>${user.level}</td>
+                        <td>${new Date(user.joinDate).toLocaleDateString()}</td>
+                    </tr>
+                `).join('');
+                tbody.innerHTML = usersHtml;
+            } else {
+                loading.textContent = 'Error al cargar usuarios';
+            }
+        }
+
+        // Form Handlers
+        document.getElementById('challengeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const challengeData = {
+                title: document.getElementById('challengeTitle').value,
+                description: document.getElementById('challengeDescription').value,
+                points: parseInt(document.getElementById('challengePoints').value)
+            };
+            
+            const result = await apiPost('/challenges', challengeData);
+            if (result) {
+                alert('✅ Desafío creado exitosamente!');
+                document.getElementById('challengeForm').reset();
+                if (document.getElementById('challenges').classList.contains('active')) {
+                    loadChallenges();
+                }
+            } else {
+                alert('❌ Error al crear desafío');
+            }
+        });
+
+        document.getElementById('userForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userData = {
+                username: document.getElementById('userUsername').value,
+                email: document.getElementById('userEmail').value,
+                firstName: document.getElementById('userFirstName').value,
+                lastName: document.getElementById('userLastName').value
+            };
+            
+            const result = await apiPost('/users', userData);
+            if (result) {
+                alert('✅ Usuario creado exitosamente!');
+                document.getElementById('userForm').reset();
+                if (document.getElementById('users').classList.contains('active')) {
+                    loadUsers();
+                }
+            } else {
+                alert('❌ Error al crear usuario');
+            }
+        });
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboard();
+        });
+    </script>
+</body>
+</html>
